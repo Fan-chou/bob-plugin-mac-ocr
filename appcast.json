@@ -1,4 +1,13 @@
 {
   "identifier": "com.fanchou.bob-plugin-mac-ocr",
-  "versions": []
+  "versions": [
+    {
+      "version": "0.1.0",
+      "desc": "首个版本：按行识别、表格制表符、位置信息（原图翻译）、繁体保留、验证、401/413/连接/超时错误提示。 / First release: row OCR, table tabs, bounding boxes, Traditional kept for zh-Hant, validate, clear errors.",
+      "sha256": "fc74eca658486c93e156d5f3985e4d6313bcd74d8d6c225688dfbd7b3c730ee6",
+      "url": "https://github.com/Fan-chou/bob-plugin-mac-ocr/releases/download/v0.1.0/bob-plugin-mac-ocr_0.1.0.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1792253055000
+    }
+  ]
 }
