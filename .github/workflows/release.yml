@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Check version matches tag
+        id: v
+        run: |
+          VERSION=$(jq -r .version src/info.json)
+          TAG="${GITHUB_REF_NAME#v}"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "$VERSION" != "$TAG" ]; then
+            echo "info.json version $VERSION != tag $TAG"; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "min=$(jq -r .minBobVersion src/info.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Syntax check
+        run: node --check src/main.js && jq . src/info.json > /dev/null
+
+      - name: Package .bobplugin
+        id: pkg
+        run: |
+          NAME="bob-plugin-mac-ocr_${{ steps.v.outputs.version }}.bobplugin"
+          (cd src && zip -r -X "../$NAME" .)
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "sha256=$(sha256sum "$NAME" | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
+
+      - name: Release notes
+        run: |
+          VERSION=${{ steps.v.outputs.version }}
+          awk -v v="$VERSION" '$0 ~ "^- \\*\\*"v"\\*\\*" {sub(/^- \*\*[^*]*\*\*[:：] */, ""); print; exit}' README.md > notes.txt
+          [ -s notes.txt ] || echo "v$VERSION" > notes.txt
+          cat notes.txt
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.v.outputs.version }}
+          name: v${{ steps.v.outputs.version }}
+          body_path: notes.txt
+          files: ${{ steps.pkg.outputs.name }}
+
+      - name: Update appcast.json
+        run: |
+          VERSION=${{ steps.v.outputs.version }}
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${VERSION}/${{ steps.pkg.outputs.name }}"
+          TS=$(($(date +%s) * 1000))
+          DESC=$(cat notes.txt)
+          jq --arg v "$VERSION" --arg d "$DESC" --arg s "${{ steps.pkg.outputs.sha256 }}" --arg u "$URL" \
+             --arg m "${{ steps.v.outputs.min }}" --argjson t "$TS" \
+             '.versions = ([{version:$v, desc:$d, sha256:$s, url:$u, minBobVersion:$m, timestamp:$t}] + [.versions[] | select(.version != $v)])' \
+             appcast.json > appcast.tmp && mv appcast.tmp appcast.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add appcast.json
+          git commit -m "appcast: v${VERSION}" || echo "no change"
+          git push origin HEAD:main

@@ -1,0 +1,68 @@
+{
+  "identifier": "com.fanchou.bob-plugin-mac-ocr",
+  "version": "0.1.0",
+  "category": "ocr",
+  "name": "Mac OCR HTTP",
+  "summary": "调用 mac-ocr-http（macOS Vision）进行文字识别，按行返回，支持位置信息 / OCR via a mac-ocr-http server (Apple Vision)",
+  "author": "Fan-chou",
+  "homepage": "https://github.com/Fan-chou/bob-plugin-mac-ocr",
+  "appcast": "https://github.com/Fan-chou/bob-plugin-mac-ocr/raw/main/appcast.json",
+  "minBobVersion": "1.8.0",
+  "options": [
+    {
+      "identifier": "url",
+      "type": "text",
+      "title": "服务地址 / Server URL",
+      "defaultValue": "http://127.0.0.1:8741",
+      "textConfig": { "type": "visible", "placeholderText": "http://127.0.0.1:8741" }
+    },
+    {
+      "identifier": "token",
+      "type": "text",
+      "title": "Token",
+      "desc": "mac-ocr-http 的 Bearer Token（服务未启用鉴权可留空）/ Bearer token of the server (leave empty if auth is off)",
+      "textConfig": { "type": "secure", "placeholderText": "Bearer token" }
+    },
+    {
+      "identifier": "script",
+      "type": "menu",
+      "title": "简繁 / Script",
+      "defaultValue": "",
+      "desc": "跟随语言：繁体中文/粤语保留繁体，其他用服务端默认（转简体）/ Follow language: keep Traditional for zh-Hant/yue, otherwise server default (Simplified)",
+      "menuValues": [
+        { "title": "跟随语言 / Follow language", "value": "" },
+        { "title": "转简体 / Simplified (hans)", "value": "hans" },
+        { "title": "保留原文 / Keep as recognized (auto)", "value": "auto" }
+      ]
+    },
+    {
+      "identifier": "layout",
+      "type": "menu",
+      "title": "版面 / Layout",
+      "defaultValue": "rows",
+      "menuValues": [
+        { "title": "按行 / Rows", "value": "rows" },
+        { "title": "文档 / Document", "value": "document" }
+      ]
+    },
+    {
+      "identifier": "fragments",
+      "type": "menu",
+      "title": "碎片 / Fragments",
+      "defaultValue": "",
+      "desc": "drop：丢弃图标/噪点等孤立碎片；keep：全部保留 / drop isolated scraps (icons, noise) or keep everything",
+      "menuValues": [
+        { "title": "服务端默认 / Server default", "value": "" },
+        { "title": "丢弃 / Drop", "value": "drop" },
+        { "title": "保留 / Keep", "value": "keep" }
+      ]
+    },
+    {
+      "identifier": "timeout",
+      "type": "text",
+      "title": "超时（秒）/ Timeout (s)",
+      "defaultValue": "60",
+      "textConfig": { "type": "visible", "placeholderText": "60" }
+    }
+  ]
+}

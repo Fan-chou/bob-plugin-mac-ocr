@@ -1,0 +1,4 @@
+node_modules/
+*.bobplugin
+.DS_Store
+notes.txt
