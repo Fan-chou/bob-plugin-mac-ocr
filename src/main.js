@@ -6,7 +6,8 @@ var LANGS = {
   "zh-Hans": ["zh-Hans", "en-US"],
   "zh-Hant": ["zh-Hant", "en-US"],
   "yue": ["zh-Hant", "en-US"],
-  "en": ["en-US"],
+  // English stays primary; zh-Hans is included so Han glyphs are not read by a Latin-only model.
+  "en": ["en-US", "zh-Hans"],
   "ja": ["ja-JP", "en-US"],
   "ko": ["ko-KR", "en-US"],
   "fr": ["fr-FR"],
@@ -18,7 +19,7 @@ var LANGS = {
   "pt-br": ["pt-BR"],
   "ru": ["ru-RU"],
   "uk": ["uk-UA"],
-  "vi": ["vi-VN"],
+  "vi": ["vi-VT"],
   "th": ["th-TH"],
   "ar": ["ar-SA"]
 };
@@ -58,10 +59,12 @@ function authHeader(header) {
   return header;
 }
 
-// Language the user picked, else the one Bob detected.
+// Explicit source language only. auto (or a missing from) must not lock Vision
+// to Bob's detectFrom — omit languages and let the server default apply.
 function pickLanguage(query) {
-  var from = query.from && query.from !== "auto" ? query.from : query.detectFrom;
-  return from && LANGS[from] ? from : "";
+  var from = query.from;
+  if (!from || from === "auto") return "";
+  return LANGS[from] ? from : "";
 }
 
 function buildQuery(lang) {

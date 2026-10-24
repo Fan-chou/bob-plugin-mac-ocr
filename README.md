@@ -27,9 +27,11 @@ A [Bob](https://bobtranslate.com) OCR plugin for [mac-ocr-http](https://github.c
 
 ## 语言 / Languages
 
-Bob 的源语言（`auto` 时用 Bob 检测到的语言）映射到 Vision 识别语言： / Bob's source language (or its detected language when `auto`) maps to Vision languages:
+Bob 源语言为 **auto**（或未给出 `from`）时，请求不带 `languages`。mac-ocr-http 关闭了 Vision 自动检测，省略该参数即使用服务端默认 `zh-Hans,en-US`，而不是把 Bob 的 `detectFrom` 锁给 Vision。Bob 常把中文界面猜成 `en`；若因此只发 `en-US`，汉字会被英文模型读成乱码。 / When Bob's source language is **auto** (or `from` is missing), the request omits `languages`. mac-ocr-http keeps Vision language detection off, so the server default `zh-Hans,en-US` applies instead of locking Vision to Bob's `detectFrom`. Bob often guesses `en` for Chinese UI; sending only `en-US` turns Chinese into garbage.
 
-`zh-Hans`→zh-Hans,en-US · `zh-Hant`/`yue`→zh-Hant,en-US（保留繁体 / keeps Traditional） · `en`→en-US · `ja`→ja-JP,en-US · `ko`→ko-KR,en-US · `fr` `de` `es` `it` `pt` `ru` `uk` `vi` `th` `ar`。其他语言交给服务端默认。 / Others use the server default.
+用户明确选择的语言仍会映射（繁体保留只在显式选择繁体中文/粤语时生效）： / An explicit choice still maps (Traditional is kept only when zh-Hant or yue is selected explicitly):
+
+`zh-Hans`→zh-Hans,en-US · `zh-Hant`/`yue`→zh-Hant,en-US（保留繁体 / keeps Traditional） · `en`→en-US,zh-Hans · `ja`→ja-JP,en-US · `ko`→ko-KR,en-US · `fr`→fr-FR · `de`→de-DE · `es`→es-ES · `it`→it-IT · `pt`→pt-BR · `ru`→ru-RU · `uk`→uk-UA · `vi`→vi-VT · `th`→th-TH · `ar`→ar-SA。未列出的语言同样省略 `languages`。 / Unlisted languages also omit `languages`.
 
 ## 代理 / Proxy
 
@@ -48,6 +50,7 @@ Bob 插件的 `$http` 没有绕过代理的选项。如果使用 Surge / ClashX 
 | 图片过大（413） | 截图超过服务端像素上限，缩小截图或调大 `OCR_HTTP_MAX_PIXELS`。 / Exceeds the server pixel limit. |
 | 请求超时 / Timed out | 调大超时选项。 / Raise the timeout option. |
 | 未识别到文字 | 图片中没有可识别文字。 / No text in the image. |
+| 中文变成乱码（如「保存」→「1577」，或西里尔/拉丁字母） / Chinese comes back as garbage | 源语言用「自动」（不带 `languages`，走服务端默认 zh-Hans+en-US）。手动选 English 时会同时带上 zh-Hans。若仍乱码，确认服务端默认不是仅 `en-US`。 / Use Auto so `languages` is omitted. Explicit English also sends zh-Hans. If it persists, the server default must not be English-only. |
 
 ## 开发 / Development
 
@@ -67,6 +70,7 @@ Release: bump `version` in `src/info.json`, add a changelog line below, commit, 
 
 ## 更新日志 / Changelog
 
+- **0.1.1**: 源语言为自动时不再把 Bob 的检测结果锁给 Vision（省略 `languages`，用服务端默认 zh-Hans+en-US）；英文同时带简体中文；越南语改为 Vision 的 `vi-VT`。 / Auto no longer locks Vision to Bob's detected language (omit `languages`, server default zh-Hans+en-US); English also includes zh-Hans; Vietnamese uses Vision's `vi-VT`.
 - **0.1.0**: 首个版本：按行识别、表格制表符、位置信息（原图翻译）、繁体保留、验证、401/413/连接/超时错误提示。 / First release: row OCR, table tabs, bounding boxes, Traditional kept for zh-Hant, validate, clear errors.
 
 ## License
