@@ -79,7 +79,8 @@ function check(ok, name, info) { ok ? pass++ : fail++; console.log((ok ? "PASS "
   check(r.result && r.result.texts.some((t) => t.text.includes("\t")), "table rows keep tabs", r.result && r.result.texts.length + " rows");
 
   r = await run(load(Object.assign({ fragments: "keep", layout: "document" }, good)), "ocr", { image: img("02-ui-icons.png"), from: "en", detectFrom: "en" });
-  check(r.result && r.result.raw.layout === "document" && /^en/.test(r.result.raw.languages.join()), "layout/fragments/languages passed", JSON.stringify(r.result && r.result.raw.languages));
+  const langs = (r.result && r.result.raw && r.result.raw.languages) || [];
+  check(r.result && r.result.raw.layout === "document" && langs.indexOf("en-US") !== -1 && langs.indexOf("zh-Hans") !== -1, "layout/fragments/languages passed", JSON.stringify(langs));
 
   r = await run(load({ url: URL0, token: "wrong" }), "ocr", { image: img("01-ui-small-zh.png"), from: "auto", detectFrom: "zh-Hans" });
   check(r.error && r.error.type === "secretKey" && /401/.test(r.error.message), "ocr 401 -> secretKey", r.error && r.error.message);

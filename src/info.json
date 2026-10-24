@@ -1,6 +1,6 @@
 {
   "identifier": "com.fanchou.bob-plugin-mac-ocr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "category": "ocr",
   "name": "Mac OCR HTTP",
   "summary": "调用 mac-ocr-http（macOS Vision）进行文字识别，按行返回，支持位置信息 / OCR via a mac-ocr-http server (Apple Vision)",
