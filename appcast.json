@@ -2,6 +2,14 @@
   "identifier": "com.fanchou.bob-plugin-mac-ocr",
   "versions": [
     {
+      "version": "0.1.1",
+      "desc": "源语言为自动时不再把 Bob 的检测结果锁给 Vision（省略 `languages`，用服务端默认 zh-Hans+en-US）；英文同时带简体中文；越南语改为 Vision 的 `vi-VT`。 / Auto no longer locks Vision to Bob's detected language (omit `languages`, server default zh-Hans+en-US); English also includes zh-Hans; Vietnamese uses Vision's `vi-VT`.",
+      "sha256": "083cf1558abab9195558d08aac1ec8019030dea76f9f6b8f1bd3ec73be3000e8",
+      "url": "https://github.com/Fan-chou/bob-plugin-mac-ocr/releases/download/v0.1.1/bob-plugin-mac-ocr_0.1.1.bobplugin",
+      "minBobVersion": "1.8.0",
+      "timestamp": 1793009430000
+    },
+    {
       "version": "0.1.0",
       "desc": "首个版本：按行识别、表格制表符、位置信息（原图翻译）、繁体保留、验证、401/413/连接/超时错误提示。 / First release: row OCR, table tabs, bounding boxes, Traditional kept for zh-Hant, validate, clear errors.",
       "sha256": "fc74eca658486c93e156d5f3985e4d6313bcd74d8d6c225688dfbd7b3c730ee6",
